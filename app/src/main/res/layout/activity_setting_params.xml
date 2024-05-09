@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SettingParamsActivity"
+    android:layout_margin="10dp"
+    >
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="返回"
+        android:onClick="back"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="模型名称"
+        android:id="@+id/tv_cao_name"
+        />
+      <!--int maskSize = 5;      //初始默认5 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="maskSize:"
+            android:gravity="center"
+
+            />
+        <SeekBar
+            android:id="@+id/sb_mask_size"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="5"
+
+            />
+        <EditText
+            android:id="@+id/et_mask_size"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="5"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+
+     <!--int maskNumber = 180;    //初始默认180 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="maskNumber:"
+            android:gravity="center"
+
+            />
+        <SeekBar
+            android:id="@+id/sb_mask_number"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="18"
+
+            />
+        <EditText
+            android:id="@+id/et_mask_number"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="180"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+     <!--int range = 8;         //初始默认8-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="range:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_range"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="8"
+
+            />
+        <EditText
+            android:id="@+id/et_range"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="8"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+     <!--int threshold = 90000;     //初始默认90000 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="threshold:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_threshold"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="9"
+
+            />
+        <EditText
+            android:id="@+id/et_threshold"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="90000"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+     <!--float minContrast = 0.5f;         //初始默认0.5 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="minContrast:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_mu1"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="5"
+
+            />
+        <EditText
+            android:id="@+id/et_mu1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="0.5"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+     <!--float maxContrast = 1.5f;         //初始默认1.5 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="maxContrast:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_mu2"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="5"
+
+            />
+        <EditText
+            android:id="@+id/et_mu2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="0.5"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+
+            />
+    </LinearLayout>
+     <!--int sampleStep = 10;    //初始默认10 -->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="sampleStep:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_sample_step"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="1"
+
+            />
+        <EditText
+            android:inputType="numberDecimal"
+
+            android:id="@+id/et_sample_step"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:gravity="center"
+            />
+    </LinearLayout>
+    <!--private double percentageGd = 0.6;    //初始默认0.6-->
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="percentageGd:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_percentage_gd"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="6"
+
+            />
+        <EditText
+            android:id="@+id/et_percentage_gd"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="0.6"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="projErrorThreshold:"
+            android:gravity="center"
+            />
+        <SeekBar
+            android:id="@+id/sb_percentage_pet"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:max="120"
+            android:progress="85"
+
+            />
+        <EditText
+            android:id="@+id/et_percentage_pet"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="0.6"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            />
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存"
+        android:onClick="save"
+        />
+
+</LinearLayout>
