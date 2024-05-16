@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.hiscene.hiarslamdemo"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 21
         ndk {
             // Specifies the ABI configurations of your native
@@ -31,6 +31,13 @@ android {
 }
 
 dependencies {
+
+    implementation project(':msclient')
+    implementation project(':vslam')
+    implementation 'io.github.haiyangwu:mediasoup-client:3.4.0'
+    implementation 'com.nabinbhandari.android:permissions:3.8'
+
+//    implementation project(':mediasoupcli')
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'

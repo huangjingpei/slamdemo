@@ -14,27 +14,37 @@ import android.widget.FrameLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.hiar.sdk.vslam.AlgWrapper;
 import com.hiar.sdk.vslam.HiarSlamInitType;
 import com.hiar.sdk.vslam.HiarSlamMode;
 import com.hiar.sdk.vslam.HiarSlamResultCode;
+import com.hiar.sdk.vslam.SlamAlgInstance;
 import com.hiscene.hiarslamdemo.Utils.TimeUtils;
 import com.hiscene.hiarslamdemo.bean.EdgeTrackerMePara;
 import com.hiscene.hiarslamdemo.camera.CameraSource;
+import com.hiscene.hiarslamdemo.camera.RendererController;
+import com.hiscene.hiarslamdemo.listener.NewFrameListener;
 import com.hiscene.hiarslamdemo.view.MyGLSurfaceView;
+import com.mediasoup.msclient.ExternalVideoCapture;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
 
-public class CameraActivity extends Activity {
+import org.webrtc.NV21Buffer;
+import org.webrtc.VideoFrame;
+
+public class CameraActivity extends Activity implements NewFrameListener {
 
     private static String TAG = "CameraActivity";
 
     public static CameraActivity instance = null;
 
     MyGLSurfaceView myGLSurfaceView;
-    ProcessRunnable processRunnable;
+
     AlgWrapper slam;
     int nSlamInitType = HiarSlamInitType.INIT_SINGLE; //选择sdk初始化方法
     int nSlamMode = HiarSlamMode.BALANCE; //选择sdk工作模式
@@ -47,6 +57,38 @@ public class CameraActivity extends Activity {
     String caoName;
     String dbFileName;
     String datFileName;
+
+    private final Timer timer = new Timer();
+    private final TimerTask tickTask = new TimerTask() {
+        public void run() {
+            CameraActivity.this.tick();
+        }
+    };
+    public void tick() {
+            if (mediaSoupClient != null) {
+                float[] matRT = SlamAlgInstance.getInstance().getMatRT();
+                float[] floats = SlamAlgInstance.getInstance().GetPointCloudPoints();
+                if (matRT.length > 0) {
+                    Gson gson = new Gson();
+                    String s = gson.toJson(matRT);
+                    mediaSoupClient.sendData("matRT:" + s);
+                }
+                if (floats.length > 0) {
+                    Gson gson = new Gson();
+                    String s = gson.toJson(floats);
+                    mediaSoupClient.sendData("cloudPoints:" + s);
+                }
+            }
+
+
+    }
+
+    private void sendSlamInfo() {
+        this.timer.schedule(this.tickTask, 0L, (long)(1000 / 30));
+    }
+
+
+    private MSClient mediaSoupClient;
 
     public static void actionStart(Context context, int nInitType,
                                    int nMode, String caoName, String dbFileName ,String datFileName) {
@@ -105,7 +147,7 @@ public class CameraActivity extends Activity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String timeStr =  "t"+ TimeUtils.millis2Date(System.currentTimeMillis());
-                slam.SaveAreaDesc(Contants.slamResPath+File.separator+
+                SlamAlgInstance.getInstance().SaveAreaDesc(Contants.slamResPath+File.separator+
                         "point_cloud"+File.separator+
                         timeStr+".dat");
             }
@@ -118,7 +160,7 @@ public class CameraActivity extends Activity {
         btnReset.setLayoutParams(new TextSwitcher.LayoutParams(210, 150));
         btnReset.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                slam.Reset();
+                SlamAlgInstance.getInstance().Reset();
             }
         });
         frameLayout.addView(btnReset);
@@ -153,14 +195,14 @@ public class CameraActivity extends Activity {
                     name = Contants.slamResPath + File.separator + name + ".yaml";
                     Log.d(TAG,"name=="+name);
                     EdgeTrackerMePara me = new EdgeTrackerMePara.Builder().build();
-                    float[] matRt = processRunnable.getMatRT();
+                    float[] matRt = SlamAlgInstance.getInstance().getMatRT();
                     double[] pose = new double[12];
                     if (matRt.length > 0) {
                         for (int i = 0; i < 12; ++i) {
                             pose[i] = matRt[i];
                         }
-                        slam.ReadYamlFile(name, me);
-                        slam.WriteYamlFileWithPose(name, me, pose);
+                        SlamAlgInstance.getInstance().ReadYamlFile(name, me);
+                        SlamAlgInstance.getInstance().WriteYamlFileWithPose(name, me, pose);
                     }
                 }
             }
@@ -176,9 +218,8 @@ public class CameraActivity extends Activity {
         btnSavePose.setVisibility(View.GONE);
         trackingStateText.setVisibility(View.GONE);
         slam = new AlgWrapper();
-        processRunnable = new ProcessRunnable(this, slam, fpsText, trackingStateText,
-                processTimeText);
-        processRunnable.setProcessListener(myGLSurfaceView);
+        SlamAlgInstance.getInstance().setAlgo(slam);
+        SlamAlgInstance.getInstance().setProcessListener(myGLSurfaceView);
 
         //processThread = new Thread(processRunnable);
         nSlamInitType = getIntent().getIntExtra("slamInitType", HiarSlamInitType.INIT_SINGLE);
@@ -186,12 +227,12 @@ public class CameraActivity extends Activity {
         caoName = getIntent().getStringExtra("caoName");
         dbFileName = getIntent().getStringExtra("dbFileName");
         datFileName=getIntent().getStringExtra("datFileName");
-        processRunnable.setSlamInitType(nSlamInitType);
+        SlamAlgInstance.getInstance().setSlamInitType(nSlamInitType);
         myGLSurfaceView.setSlamInitType(nSlamInitType);
         //获取HiarSdk版本号
-        slam.GetVersion();
-
-        slam.GetPreferredSystemCameraIntrinsics(CameraSource.Instance().getPreviewWidth(), CameraSource.Instance().getPreviewHeight());
+        SlamAlgInstance.getInstance().GetVersion();
+        CameraSource.Instance().setNewFrameListener(this);
+        SlamAlgInstance.getInstance().GetPreferredSystemCameraIntrinsics(CameraSource.Instance().getPreviewWidth(), CameraSource.Instance().getPreviewHeight());
 
         splashText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,8 +270,8 @@ public class CameraActivity extends Activity {
                         Get3DLine();
                     }
                 }
-                
-                processRunnable.setNeedProcess(true);
+
+                SlamAlgInstance.getInstance().setNeedProcess(true);
                 // processThread.start();
                 splashText.setVisibility(View.GONE);
                 //fpsText.setVisibility(View.VISIBLE);
@@ -246,14 +287,18 @@ public class CameraActivity extends Activity {
             }
         });
         splashText.setVisibility(View.VISIBLE);
+        mediaSoupClient = new MSClient();
+        mediaSoupClient.create();
+
+        sendSlamInfo();
     }
 
     private void Get3DLine() {
         if(nSlamInitType == HiarSlamInitType.INIT_MODEL) {
             int[] lineNum = new int[1];
-            slam.Get3DLineCount(lineNum);
+            SlamAlgInstance.getInstance().Get3DLineCount(lineNum);
             float[] lineArray = new float[lineNum[0] * 6];
-            slam.Get3DLines(lineArray, lineNum);
+            SlamAlgInstance.getInstance().Get3DLines(lineArray, lineNum);
             myGLSurfaceView.setLineArray(lineArray, lineNum);
         }
     }
@@ -261,9 +306,25 @@ public class CameraActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        processRunnable.setNeedProcess(false);
-        slam.Destroy();
-        processRunnable.setProcessListener(null);
+        timer.cancel();
+        SlamAlgInstance.getInstance().setNeedProcess(false);
+        SlamAlgInstance.getInstance().setProcessListener(null);
+        SlamAlgInstance.getInstance().destroyAlgo();
         //processThread.interrupt();
+        mediaSoupClient.destroy();
+    }
+
+    @Override
+    public void onNewFrame(byte[] data, int width, int height) {
+        //send buffer to slam algo.
+        SlamAlgInstance.getInstance().pushVideoFrame(data, width, height);
+
+        //send VideoFrame to media soup client.
+        VideoFrame.Buffer frameBuffer = new NV21Buffer(data, width, height, null);
+        VideoFrame frameNew= new VideoFrame(frameBuffer,0,System.currentTimeMillis()*1000000);
+        ExternalVideoCapture.getInstance().PushVideoFrame(frameNew);
+
+        // render
+        RendererController.Instance().onFrame(data, width, height);
     }
 }

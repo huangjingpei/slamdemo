@@ -4,13 +4,14 @@ import android.content.Context;
 import android.app.Activity;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.hiar.sdk.vslam.HiarSlamInitType;
 import com.hiar.sdk.vslam.HiarSlamState;
+import com.hiar.sdk.vslam.ProcessListener;
 import com.hiscene.hiarslamdemo.camera.CameraSource;
 import com.hiscene.hiarslamdemo.camera.RendererController;
-import com.hiscene.hiarslamdemo.listener.ProcessListener;
 import com.hiscene.hiarslamdemo.widget.Cube;
 import com.hiscene.hiarslamdemo.widget.Frame;
 import com.hiscene.hiarslamdemo.widget.ModelLines;
@@ -28,6 +29,8 @@ public class MyGLSurfaceView extends GLSurfaceView implements ProcessListener {
 	MyRenderer mRenderer;
 	int nSlamInitType;
 	private Activity activity;
+
+	private static String TAG = "MyGLSurfaceView";
 
 	public MyGLSurfaceView(Context context) {
 		super(context);
@@ -55,6 +58,22 @@ public class MyGLSurfaceView extends GLSurfaceView implements ProcessListener {
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		super.surfaceDestroyed(holder);
 		CameraSource.Instance().closeCamera();
+	}
+
+	@Override
+	public void donProcessFps(int fps) {
+		Log.w(TAG, "donProcessFps: " + fps);
+	}
+
+	@Override
+	public void onProcessTime(float processTimeMillis) {
+		Log.w(TAG, "onProcessTime: " + processTimeMillis);
+
+	}
+
+	@Override
+	public void onTrackingState(String state) {
+		Log.w(TAG, "onTrackingState: " + state);
 	}
 
 	@Override
